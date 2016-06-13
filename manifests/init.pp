@@ -61,19 +61,13 @@ class sinopia (
     require => [User[$deamon_user], Group[$deamon_user]]
   }
 
-  ### ensures, that always the latest versions of npm modules are installed ###
-  $modules_path="${install_path}/node_modules"
-  file { $modules_path:
-    ensure => absent,
-  }
-
   $service_notify = $install_as_service ? {
     default => undef,
     true => Service['sinopia']
   }
   nodejs::npm { "${install_path}:sinopia":
     ensure       => present,
-    require      => [File[$install_path,$modules_path],User[$deamon_user]],
+    require      => [File[$install_path],User[$deamon_user]],
     notify       => $service_notify,
     exec_as_user => $deamon_user,
   }
