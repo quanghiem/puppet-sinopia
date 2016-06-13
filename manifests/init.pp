@@ -29,23 +29,29 @@ class sinopia (
   $conf_user_pw_combinations = undef,
   $conf_max_body_size        = '1mb',
   $conf_max_age_in_sec       = '86400',
+  $manage_root               = true,
+  $manage_user               = true,
   $install_as_service        = true,) {
   require nodejs
   $install_path = "${install_root}/${install_dir}"
 
-  group { $deamon_user:
-    ensure => present,
+  if $manage_user == true {
+    group { $deamon_user:
+      ensure => present,
+    }
+
+    user { $deamon_user:
+      ensure     => present,
+      gid        => $deamon_user,
+      managehome => true,
+      require    => Group[$deamon_user]
+    }
   }
 
-  user { $deamon_user:
-    ensure     => present,
-    gid        => $deamon_user,
-    managehome => true,
-    require    => Group[$deamon_user]
-  }
-
-  file { $install_root:
-    ensure => directory,
+  if $manage_root == true {
+    file { $install_root:
+      ensure => directory,
+    }
   }
 
   file { $install_path:
