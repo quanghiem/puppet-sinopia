@@ -90,13 +90,6 @@ class sinopia (
     notify  => $service_notify,
   }
 
-  file { "${install_path}/deamon.log":
-    ensure  => present,
-    owner   => $deamon_user,
-    group   => $deamon_user,
-    require => File[$install_path],
-  }
-
   if $install_as_service {
     $init_file = '/etc/init.d/sinopia'
 
@@ -104,6 +97,13 @@ class sinopia (
       content => template('sinopia/service.erb'),
       mode    => '0755',
       notify  => $service_notify,
+    }
+
+    file { "${install_path}/deamon.log":
+      ensure  => present,
+      owner   => $deamon_user,
+      group   => $deamon_user,
+      require => File[$install_path],
     }
 
     service { 'sinopia':
